@@ -27,6 +27,14 @@ void VAO::Unbind()
 	glBindVertexArray(0);
 }
 
+void VAO::init(VBO& VBO)
+{
+	this->Bind();
+	this->LinkAttrib(VBO, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
+    this->LinkAttrib(VBO, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3*sizeof(float)));
+    this->LinkAttrib(VBO, 2, 3, GL_FLOAT, 8 * sizeof(float), (void*)(6*sizeof(float)));
+	this->Unbind();
+}
 // Deletes the VAO
 void VAO::Delete()
 {
