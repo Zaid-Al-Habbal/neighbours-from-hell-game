@@ -10,3 +10,9 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 CMakeUserPresets.json
+/resources
+/configuration
+/includes/glm
+CMakeLists.txt
+/bin
+build/
