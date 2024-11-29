@@ -33,21 +33,12 @@ Light::Light(Shader myShader, bool enableDir, int numOfPoints, bool enableSpot, 
     this->spotLightDirection = cameraFront;
     //viewPos:
     this->viewPos = cameraPos;
-    //material:
-    // this->materialShininess = 32.0f;
-    // this->materialDiffuse = materialDiffuse;
-    // this->materialSpecular = materialSpecular;
- 
+
 }
 
 void Light::turnOnTheLights(){
     myShader.use();
     myShader.setVec3("viewPos", viewPos);
-    //Material:
-    // materialDiffuse.texUnit(myShader, "material.diffuse", 0);
-    // materialSpecular.texUnit(myShader, "material.specular", 1);
-    // myShader.setFloat("material.shininess", 32.0f);
-    
 
     //lights:
     // directional light
