@@ -22,7 +22,9 @@
 #include "LivingRoom.h"
 #include "Room.h"
 #include "color.hpp"
-#include <Sofa.h>
+#include "Sofa.h"
+#include "Cylinder.h"
+#include "Torus.h"
 
 using namespace std;
 
@@ -67,6 +69,13 @@ int main()
     TextureClass sofaTex("../resources/textures/rubber.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
     TextureClass sofaSpecTex("../resources/textures/rubber.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
     
+    TextureClass triaTex("../resources/textures/glass.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    TextureClass triaSpecTex("../resources/textures/glass.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
+    
+    //shapes:
+    //Tria:
+    Cylinder triaBar(0.01f, 0.01f, 0.1f, 16, 1, true, 2);
+    Cylinder tria(0.2f, 0.11f, 0.1f, 32, 1, true, 2);
     //VBOs:
 
     //for Living Room:
@@ -74,14 +83,21 @@ int main()
     VBO roomVBO(Room::vertices, sizeof(Room::vertices));
     VBO cubeVBO(Cube::vertices, sizeof(Cube::vertices));
     VBO sofaVBO(Sofa::vertices, sizeof(Sofa::vertices));
-
+    VBO triaBarVBO(triaBar.getInterleavedVertices(), triaBar.getInterleavedVertexSize());
+    VBO triaVBO(tria.getInterleavedVertices(), tria.getInterleavedVertexSize());
 
     //VAOs:
 	VAO livingRoomVAO; livingRoomVAO.init(livingRoomVBO);
 	VAO roomVAO; roomVAO.init(roomVBO);
     VAO cubeVAO; cubeVAO.init(cubeVBO);
     VAO sofaVAO; sofaVAO.init(sofaVBO);
+    VAO triaBarVAO; triaBarVAO.init(triaBarVBO);
+    VAO triaVAO; triaVAO.init(triaVBO);
     
+    //EBOs:
+    EBO triaBarEBO(triaBar.getIndices(), triaBar.getIndexSize());
+    EBO triaEBO(tria.getIndices(), tria.getIndexSize());
+
     //postions:
     //Rooms:
     vector<pair<glm::vec3, glm::vec3>> rooms; // {position, scale}
@@ -116,10 +132,10 @@ int main()
 
 
         //set the lights:
-        Light light(mainShader, false, 3, false, camera.Position, camera.Front);
-        light.pointLightPosition[0] = glm::vec3(-2.0f, 0.0f, 3.0f);
-        light.pointLightPosition[1] = glm::vec3(4.0f, 0.0f, 3.0f);
-        light.pointLightPosition[2] = glm::vec3(1.0f, 0.0f, 3.0f);
+        Light light(mainShader, false, 2, false, camera.Position, camera.Front);
+        light.pointLightPosition[0] = glm::vec3(4.0f, 0.0f, 3.0f);
+        light.pointLightPosition[1] = glm::vec3(0.990622, 0.414369, -0.0452774);
+        light.pointLightColor[1] = Color::Yellow;
         light.turnOnTheLights();
 
         //set material:
@@ -290,11 +306,29 @@ int main()
             glDrawArrays(GL_TRIANGLES, 0, sizeof(Cube::vertices)/8);
         }
 
+        //Tria:
+        //TriaBar:
+        //material:
+        triaTex.Bind();
+        triaSpecTex.Bind();
+        triaTex.texUnit(mainShader, "texture.diffuse1", 0);
+        triaSpecTex.texUnit(mainShader, "texture.specular1", 1);
+        
+        //model:
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(1.0f, 0.45f, 0.0f));
+        mainShader.setMat4("model", model);
 
+        triaBarVAO.Bind(); triaBarEBO.Bind();
+        glDrawElements(GL_TRIANGLES, triaBar.getIndexCount(), GL_UNSIGNED_INT, (void*)0);
 
+        //tria:
+        //model:
+        model = glm::translate(model, glm::vec3(0.0f, -0.1f, 0.0f));
+        mainShader.setMat4("model", model);
 
-
-
+        triaVAO.Bind(); triaEBO.Bind();
+        glDrawElements(GL_TRIANGLES, tria.getIndexCount(), GL_UNSIGNED_INT, (void*)0);
 
 
 
