@@ -21,6 +21,8 @@
 #include "Cube.h"
 #include "LivingRoom.h"
 #include "Room.h"
+#include "color.hpp"
+#include <Sofa.h>
 
 using namespace std;
 
@@ -59,30 +61,47 @@ int main()
     TextureClass screenTex("../resources/textures/screen.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
     TextureClass screenSpecTex("../resources/textures/screen.jpg", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGB, GL_UNSIGNED_BYTE);
     
+    TextureClass tableTex("../resources/textures/wood2.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    TextureClass tableSpecTex("../resources/textures/wood2.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
+    
+    TextureClass sofaTex("../resources/textures/rubber.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    TextureClass sofaSpecTex("../resources/textures/rubber.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
+    
     //VBOs:
 
     //for Living Room:
     VBO livingRoomVBO(LivingRoom::vertices, sizeof(LivingRoom::vertices));
     VBO roomVBO(Room::vertices, sizeof(Room::vertices));
     VBO cubeVBO(Cube::vertices, sizeof(Cube::vertices));
+    VBO sofaVBO(Sofa::vertices, sizeof(Sofa::vertices));
 
 
     //VAOs:
 	VAO livingRoomVAO; livingRoomVAO.init(livingRoomVBO);
 	VAO roomVAO; roomVAO.init(roomVBO);
     VAO cubeVAO; cubeVAO.init(cubeVBO);
+    VAO sofaVAO; sofaVAO.init(sofaVBO);
     
     //postions:
+    //Rooms:
     vector<pair<glm::vec3, glm::vec3>> rooms; // {position, scale}
     rooms.push_back({glm::vec3(5.27f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 0.55f)});
     rooms.push_back({glm::vec3(3.5f, -1.05f, 0.0f), glm::vec3(3.0f, 1.0f, 0.55f)});
     rooms.push_back({glm::vec3(-1.0f, -1.05f, 0.0f), glm::vec3(1.5f, 1.0f, 0.55f)});
+
+    //SofaLegs:
+    vector<glm::vec3> sofaLegs;
+    sofaLegs.push_back(glm::vec3(0.7f, -0.45f, 0.0f));
+    sofaLegs.push_back(glm::vec3(0.5f, -0.45f, 0.0f));
+    sofaLegs.push_back(glm::vec3(0.6f, -0.45f, -0.05f));
+    sofaLegs.push_back(glm::vec3(0.6f, -0.45f, 0.1f));
+
+
     // render loop:
     while(!controller.shouldClose()){
         controller.updateDeltaTime();
         controller.processInput();
         Camera camera = controller.getCamera();
-
         // render
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
@@ -97,7 +116,10 @@ int main()
 
 
         //set the lights:
-        Light light(mainShader, true, 0, false, camera.Position, camera.Front);
+        Light light(mainShader, false, 3, false, camera.Position, camera.Front);
+        light.pointLightPosition[0] = glm::vec3(-2.0f, 0.0f, 3.0f);
+        light.pointLightPosition[1] = glm::vec3(4.0f, 0.0f, 3.0f);
+        light.pointLightPosition[2] = glm::vec3(1.0f, 0.0f, 3.0f);
         light.turnOnTheLights();
 
         //set material:
@@ -151,6 +173,38 @@ int main()
 
         glDrawArrays(GL_TRIANGLES, 0, sizeof(Cube::vertices)/8);
 
+        //table:
+        //material:
+        tableTex.Bind();
+        tableSpecTex.Bind();
+        tableTex.texUnit(mainShader, "texture.diffuse1", 0);
+        tableSpecTex.texUnit(mainShader, "texture.specular1", 1);
+        
+        //surface:
+        //model:
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-0.7f, -0.35f, 0.0f));
+        model = glm::rotate(model, glm::radians(-25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.3f, 0.01f, 0.5f));
+        mainShader.setMat4("model", model);
+
+        glDrawArrays(GL_TRIANGLES, 0, sizeof(Cube::vertices)/8);
+        //legs:
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-0.78f, -0.42f, 0.1f));
+        model = glm::rotate(model, glm::radians(-25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.07f, 0.15f, 0.05f));
+        mainShader.setMat4("model", model);
+
+        glDrawArrays(GL_TRIANGLES, 0, sizeof(Cube::vertices)/8);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-0.7f, -0.42f, -0.1f));
+        model = glm::rotate(model, glm::radians(-25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.07f, 0.15f, 0.05f));
+        mainShader.setMat4("model", model);
+
+        glDrawArrays(GL_TRIANGLES, 0, sizeof(Cube::vertices)/8);
         //tv:
         //box
         //material:
@@ -183,7 +237,67 @@ int main()
         mainShader.setMat4("model", model);
 
         glDrawArrays(GL_TRIANGLES, 0, sizeof(Cube::vertices)/8);
+
+        //Sofa:
+        //Seat && Backrest:
+        //material:
+        sofaTex.Bind();
+        sofaSpecTex.Bind();
+        sofaTex.texUnit(mainShader, "texture.diffuse1", 0);
+        sofaSpecTex.texUnit(mainShader, "texture.specular1", 1);
+        //model
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.6f, -0.4f, 0.0f));
+        model = glm::rotate(model, glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.3f, 0.6f, 0.3f));
+        mainShader.setMat4("model", model);
         
+        sofaVAO.Bind();
+
+        glDrawArrays(GL_TRIANGLES, 0, sizeof(Sofa::vertices)/8);
+
+        //ARMREST:
+        cubeVAO.Bind();
+        //model:
+        //right armrest:
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.67f, -0.25f, 0.08f));
+        model = glm::rotate(model, glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.15f));
+        mainShader.setMat4("model", model);
+        glDrawArrays(GL_TRIANGLES, 0, sizeof(Cube::vertices)/8);
+        //left armrest:
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.52f, -0.25f, -0.08f));
+        model = glm::rotate(model, glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.15f));
+        mainShader.setMat4("model", model);
+        glDrawArrays(GL_TRIANGLES, 0, sizeof(Cube::vertices)/8);
+        //legs:
+        //material:
+        tableTex.Bind();
+        tableSpecTex.Bind();
+        tableTex.texUnit(mainShader, "texture.diffuse1", 0);
+        tableSpecTex.texUnit(mainShader, "texture.specular1", 1);
+        
+        //model:
+        for(int i=0; i<(int)sofaLegs.size(); i++){
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, sofaLegs[i]);
+            model = glm::rotate(model, glm::radians(-25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+            model = glm::scale(model, glm::vec3(0.02f, 0.1f, 0.02f));
+            mainShader.setMat4("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, sizeof(Cube::vertices)/8);
+        }
+
+
+
+
+
+
+
+
+
 
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)

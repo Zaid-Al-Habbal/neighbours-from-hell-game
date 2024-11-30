@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement {
@@ -56,7 +57,9 @@ public:
         Pitch = pitch;
         updateCameraVectors();
     }
-
+    void printPos(){
+        std::cout << this->Position.x << " " << this->Position.y <<  " " << this->Position.z << "\n";
+    }
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
     glm::mat4 GetViewMatrix()
     {
