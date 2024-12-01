@@ -69,8 +69,8 @@ int main()
     TextureClass sofaTex("../resources/textures/rubber.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
     TextureClass sofaSpecTex("../resources/textures/rubber.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
     
-    TextureClass triaTex("../resources/textures/glass.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-    TextureClass triaSpecTex("../resources/textures/glass.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
+    TextureClass triaTex("../resources/textures/tv-box.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
+    TextureClass triaSpecTex("../resources/textures/white.jpg", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGB, GL_UNSIGNED_BYTE);
     
     //shapes:
     //Tria:
@@ -133,7 +133,7 @@ int main()
 
         //set the lights:
         Light light(mainShader, false, 2, false, camera.Position, camera.Front);
-        light.pointLightPosition[0] = glm::vec3(4.0f, 0.0f, 3.0f);
+        light.pointLightPosition[0] = glm::vec3(4.0f, 0.0f, 2.0f);
         light.pointLightPosition[1] = glm::vec3(0.990622, 0.414369, -0.0452774);
         light.pointLightColor[1] = Color::Yellow;
         light.turnOnTheLights();
