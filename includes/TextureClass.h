@@ -22,5 +22,7 @@ public:
 	void Unbind();
 	// Deletes a texture
 	void Delete();
+	//enable material:
+	static void enable(Shader mainShader, TextureClass diffuseTex, TextureClass specularTex);
 };
 #endif

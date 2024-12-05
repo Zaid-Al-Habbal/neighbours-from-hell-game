@@ -41,6 +41,9 @@ int main()
     stbi_set_flip_vertically_on_load(true);
     // configure global opengl state
     glEnable(GL_DEPTH_TEST);
+    // enable blending:
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -69,13 +72,13 @@ int main()
     TextureClass sofaTex("../resources/textures/rubber.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
     TextureClass sofaSpecTex("../resources/textures/rubber.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
     
-    TextureClass triaTex("../resources/textures/tv-box.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
+    TextureClass triaTex("../resources/textures/wood2.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
     TextureClass triaSpecTex("../resources/textures/white.jpg", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGB, GL_UNSIGNED_BYTE);
     
     //shapes:
     //Tria:
     Cylinder triaBar(0.01f, 0.01f, 0.1f, 16, 1, true, 2);
-    Cylinder tria(0.2f, 0.11f, 0.1f, 32, 1, true, 2);
+    Cylinder tria(0.2f, 0.11f, 0.1f, 32, 1, false, 2); 
     //VBOs:
 
     //for Living Room:
@@ -129,6 +132,7 @@ int main()
         mainShader.setMat4("projection", projection);
         mainShader.setMat4("view", view);
         glm::mat4 model = glm::mat4(1.0f);
+        mainShader.setFloat("alpha", 1.0f);
 
 
         //set the lights:
@@ -326,6 +330,7 @@ int main()
         //model:
         model = glm::translate(model, glm::vec3(0.0f, -0.1f, 0.0f));
         mainShader.setMat4("model", model);
+        mainShader.setFloat("alpha", 0.4f);
 
         triaVAO.Bind(); triaEBO.Bind();
         glDrawElements(GL_TRIANGLES, tria.getIndexCount(), GL_UNSIGNED_INT, (void*)0);
@@ -341,6 +346,8 @@ int main()
 
 	// EBO1.Delete();
     // glfw: terminate, clearing all previously allocated GLFW resources.
-    glfwTerminate();
+    glfwTerminate();// enable blending:
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     return 0;
 }

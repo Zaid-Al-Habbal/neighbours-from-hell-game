@@ -73,3 +73,11 @@ void TextureClass::Delete()
 {
 	glDeleteTextures(1, &ID);
 }
+
+void TextureClass::enable(Shader mainShader, TextureClass diffuseTex, TextureClass specularTex)
+{
+    diffuseTex.Bind();
+    specularTex.Bind();
+    diffuseTex.texUnit(mainShader, "texture.diffuse1", 0);
+    specularTex.texUnit(mainShader, "texture.specular1", 1);
+}
