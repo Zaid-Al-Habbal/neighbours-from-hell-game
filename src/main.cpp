@@ -54,8 +54,8 @@ int main()
 
 
     //Textures:
-    TextureClass wallTex("../resources/textures/wood.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-    TextureClass wallSpecTex("../resources/textures/wood.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
+    TextureClass wallTex("../resources/textures/wood2.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    TextureClass wallSpecTex("../resources/textures/wood2.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
     
     TextureClass doorTex("../resources/textures/door.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
     TextureClass doorSpecTex("../resources/textures/door.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
@@ -136,11 +136,17 @@ int main()
 
 
         //set the lights:
-        Light light(mainShader, false, 2, false, camera.Position, camera.Front);
-        light.pointLightPosition[0] = glm::vec3(4.0f, 0.0f, 2.0f);
-        light.pointLightPosition[1] = glm::vec3(0.990622, 0.414369, -0.0452774);
-        light.pointLightColor[1] = Color::Yellow;
-        light.turnOnTheLights();
+        if(controller.lightToggle){
+            Light light(mainShader, false, 2, false, camera.Position, camera.Front);
+            light.pointLightPosition[0] = glm::vec3(4.0f, 0.0f, 2.0f);
+            light.pointLightPosition[1] = glm::vec3(0.990622, 0.414369, -0.0452774);
+            light.pointLightColor[1] = Color::Yellow;
+            light.turnOnTheLights();
+        }
+        else{
+            Light light(mainShader, true, 0, false, camera.Position, camera.Front);
+            light.turnOnTheLights();
+        }
 
         //set material:
         mainShader.setFloat("shininess", 32.0f);
@@ -179,6 +185,7 @@ int main()
         //model:
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(1.25f, -0.15f, -0.55f));
+        // model = glm::rotate(model, glm::radians(80.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::scale(model, glm::vec3(0.53f, 0.8f, 0.05f));
         mainShader.setMat4("model", model);
 
