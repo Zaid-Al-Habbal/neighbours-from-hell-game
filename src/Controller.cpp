@@ -12,7 +12,8 @@ Controller::Controller(unsigned int width, unsigned int height):
     firstMouse(true),
     SCR_WIDTH(width),
     SCR_HEIGHT(height),
-    lightToggle(false)
+    lightToggle(false),
+    isOpen(false)
 {}
 
 Controller::~Controller() {
@@ -82,6 +83,9 @@ void Controller::processInput() {
         camera.ProcessKeyboard(RIGHT, deltaTime);
 
     lightToggle = lightIt;
+
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+        isOpen^=1; 
 }
 
 void Controller::updateDeltaTime() {

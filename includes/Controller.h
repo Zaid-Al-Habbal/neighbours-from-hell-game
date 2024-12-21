@@ -34,6 +34,7 @@ private:
 
 public:
     bool lightToggle;
+    bool isOpen;
     // Constructor
     Controller(unsigned int width = 800, unsigned int height = 600);
 
